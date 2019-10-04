@@ -1,5 +1,5 @@
 [package]
-name = "rbr-plugins"
+name = "rbr-plugin-runner"
 version = "0.1.0"
 authors = ["Robert <r@robertmasen.com>"]
 edition = "2018"
