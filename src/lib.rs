@@ -1,7 +1,8 @@
 //! rbr-plugin-runner (lib)
-//! step5
+//! step6
 pub use rbr_macro::rbr_macro;
-
+pub use bincode::{serialize, deserialize};
+use serde::{Serialize, Deserialize};
 extern "C" {
     pub fn print_str(ptr: *const u8, len: usize);
 }
@@ -16,4 +17,10 @@ pub fn setup_error_handler() {
     ::std::sync::Once::new().call_once(|| {
         ::std::panic::set_hook(Box::new(err_hook))
     });
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Thing {
+    pub stuff: String,
+    pub times: u32,
 }

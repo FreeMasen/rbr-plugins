@@ -1,5 +1,5 @@
 //! rbr-plugin
-//! step5
+//! step6
 //! Plugin Code will go here
 
 use rbr_plugin_runner::*;
@@ -7,8 +7,11 @@ use rbr_plugin_runner::*;
 /// What we would write if this was just
 /// a rust library
 #[rbr_macro]
-pub fn double(s: String) -> String {
-    s.repeat(2)
+pub fn double(t: Thing) -> Thing {
+    Thing {
+        stuff: t.stuff.repeat(2),
+        times: t.times * 2
+    }
 }
 
 #[cfg(test)]

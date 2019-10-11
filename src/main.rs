@@ -1,5 +1,5 @@
 //! rbr-plugin-runner (bin)
-//! step5
+//! step6
 use wasmer_runtime::{
     Ctx,
     func,
@@ -13,6 +13,12 @@ use std::{
     fs::read,
     error::Error,
 };
+mod lib;
+use lib::{
+    deserialize,
+    serialize,
+    Thing,
+};
 type Res<T> = Result<T, Box<dyn Error>>;
 
 fn main() -> Res<()> {
@@ -25,24 +31,44 @@ fn main() -> Res<()> {
     })?;
     let context = instance.context();
     let memory = context.memory(0);
-    let len = inject_str("double", &memory.view());
+    let len = inject_thing(&Thing { stuff: "double".into(), times: 1}, &memory.view())?;
     let double = instance.func::<(u32, u32), u32>("double_")?;
     let start = double.call(5, len)?;
     let view = memory.view();
-    let two = extract_string(start, get_len(&view), &view)?;
+    let two = extract_thing(start, get_len(&view), &view)?;
     dbg!(two);
     Ok(())
 }
 
-fn inject_str(s: &str, mem: &MemoryView<u8>) -> u32 {
+fn inject_thing(t: &Thing, mem: &MemoryView<u8>) -> Res<u32> {
     for cell in mem[0..5].iter() {
         cell.set(0)
     }
-    let bytes = s.as_bytes();
+    let bytes = serialize(t)?;
     for (cell, byte) in mem[5..].iter().zip(bytes.iter()) {
-        cell.set(*byte+100)
+        cell.set(*byte)
     }
-    bytes.len() as u32
+    Ok(bytes.len() as u32)
+}
+
+fn extract_string(start: u32, len: u32, mem: &MemoryView<u8>) -> Res<String> {
+    let bytes = extract_bytes(start, len, mem);
+    let ret = String::from_utf8(bytes)?;
+    Ok(ret)
+}
+
+fn extract_thing(start: u32, len: u32, mem: &MemoryView<u8>) -> Res<Thing> {
+    let bytes = extract_bytes(start, len, mem);
+    let ret = deserialize(&bytes)?;
+    Ok(ret)
+}
+
+fn extract_bytes(start: u32, len: u32, mem: &MemoryView<u8>) -> Vec<u8> {
+    let end = (start + len) as usize;
+    mem[start as usize..end]
+                .iter()
+                .map(|c| c.get())
+                .collect()
 }
 
 fn get_len(mem: &MemoryView<u8>) -> u32 {
@@ -53,19 +79,9 @@ fn get_len(mem: &MemoryView<u8>) -> u32 {
     u32::from_ne_bytes(len_bytes)
 }
 
-fn extract_string(start: u32, len: u32, mem: &MemoryView<u8>) -> Res<String> {
-    let end = (start + len) as usize;
-    let bytes = mem[start as usize..end]
-                .iter()
-                .map(|c| c.get())
-                .collect();
-    let ret = String::from_utf8(bytes)?;
-    Ok(ret)
-}
-
 fn get_wasm() -> Res<Vec<u8>> {
     let mut cmd = args();
-    // dump currnet app name
+    // dump current app name
     let _ = cmd.next();
     let path = if let Some(p) = cmd.next() {
         p

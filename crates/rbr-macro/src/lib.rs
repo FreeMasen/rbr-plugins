@@ -1,5 +1,5 @@
 //! rbr-macro
-//! step5
+//! step6
 
 extern crate proc_macro;
 
@@ -38,13 +38,14 @@ fn handle_func(func: ItemFn) -> TokenStream {
             let bytes = unsafe {
                 ::std::slice::from_raw_parts(ptr as _, len as _)
             };
-            let mut s = String::from_utf8(bytes.to_vec()).unwrap();
+            let mut s = deserialize(bytes).expect("Unable to deserialize bytes");
             s = #orig(s);
-            let ret_len = s.as_bytes().len();
+            let bytes = serialize(&s).expect("Unable to serialize updated value");
+            let ret_len = bytes.len();
             unsafe {
                 ::std::ptr::write(1 as _, ret_len as u32);
             }
-            s.as_ptr() as u32
+            bytes.as_ptr() as u32
         }
     };
     ret.into()
