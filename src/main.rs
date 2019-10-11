@@ -1,5 +1,5 @@
 //! rbr-plugin-runner
-//! step1
+//! step2
 use wasmer_runtime::{
     instantiate,
     imports,
@@ -15,6 +15,10 @@ type Res<T> = Result<T, Box<dyn Error>>;
 fn main() -> Res<()> {
     // Plugin Running Code will go here
     let wasm = get_wasm()?;
+    let instance = instantiate(&wasm, &imports!{})?;
+    let double = instance.func::<u32, u32>("double")?;
+    let two = double.call(1)?;
+    dbg!(two);
     Ok(())
 }
 
