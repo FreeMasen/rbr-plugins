@@ -1,5 +1,5 @@
 //! rbr-plugin-runner
-//! step3
+//! step4
 use wasmer_runtime::{
     instantiate,
     imports,

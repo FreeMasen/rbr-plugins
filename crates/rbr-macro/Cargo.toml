@@ -1,13 +1,15 @@
 [package]
-name = "rbr-plugin"
+name = "rbr-macro"
 version = "0.1.0"
-authors = ["Robert <r@robertmasen.com>"]
+authors = ["Robert Masen <r.f.masen@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rbr-macro = { path = "../rbr-macro" }
+syn = { version = "1", features = ["full"] }
+quote = "1"
+proc-macro2 = "1"
 
 [lib]
-crate-type = ["cdylib"]
+proc-macro = true
