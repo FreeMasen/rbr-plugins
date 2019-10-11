@@ -1,4 +1,6 @@
-/// Plugin Code will go here
+//! rbr-plugin
+//! master
+//! Plugin Code will go here
 
 
 
