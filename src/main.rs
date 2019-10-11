@@ -1,4 +1,4 @@
-//! rbr-plugin-runner
+//! rbr-plugin-runner (bin)
 //! step5
 use wasmer_runtime::{
     Ctx,

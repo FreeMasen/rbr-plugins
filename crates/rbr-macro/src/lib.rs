@@ -46,21 +46,6 @@ fn handle_func(func: ItemFn) -> TokenStream {
             }
             s.as_ptr() as u32
         }
-        extern "C" {
-            fn print_str(ptr: *const u8, len: usize);
-        }
-
-        fn setup_error_handler() {
-            fn err_hook(info: &::std::panic::PanicInfo) {
-                let msg = info.to_string();
-                unsafe {
-                    print_str(msg.as_ptr(), msg.len());
-                }
-            }
-            ::std::sync::Once::new().call_once(|| {
-                ::std::panic::set_hook(Box::new(err_hook))
-            });
-        }
     };
     ret.into()
 }

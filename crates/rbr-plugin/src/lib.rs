@@ -2,7 +2,7 @@
 //! step5
 //! Plugin Code will go here
 
-use rbr_macro::rbr_macro;
+use rbr_plugin_runner::*;
 
 /// What we would write if this was just
 /// a rust library

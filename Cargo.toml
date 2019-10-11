@@ -7,10 +7,15 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-wasmer-runtime = "0.8"
+wasmer-runtime = { version = "0.8", optional = true }
+rbr-macro = { path = "crates/rbr-macro", optional = true }
 
 [workspace]
 members = [
     "crates/rbr-plugin",
     "crates/rbr-macro"
 ]
+
+[features]
+default = ["rbr-macro"]
+bin = ["wasmer-runtime"]
